@@ -1,0 +1,32 @@
+{
+    "provider_name": "Zappos",
+    "url":
+        "http://www.zappos.com/puma-kids-speeder-illuminescent-v-infant-toddler-youth-
+         limestone-gray-twilight-blue-flame-scarlet",
+    "products":
+       [{
+        "title": "Puma Kids Speeder Illuminescent V",
+        "brand": "Puma",
+        "product_id": "SKU 7587775",
+        "gender": "male",
+        "product_expiration": 2013-12-20T00:00:00,
+        "offers":
+        [{
+            "description": "White/New Navy/Strong Blue",
+            "price": 45.00,
+            "currency_code": "USD",
+            "standard_price": 55.00,
+            "availability": "in stock",
+            "sale_start_date": 2013-12-24T00:00:00,
+            "sale_end_date": 2013-12-31T00:00:00,
+        },{
+            "description": "Black/White/Dark Shadow",
+            "price": 52.00,
+            "currency_code": "USD",
+            "standard_price": 55.00,
+            "availability": "in stock",
+            "sale_start_date": 2013-12-24T00:00:00,
+            "sale_end_date": 2013-12-31T00:00:00,
+        }]
+       }]
+}
