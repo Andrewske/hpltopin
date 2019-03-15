@@ -3,37 +3,63 @@ from selenium.webdriver.common.keys import Keys
 import secrets
 import time
 import bonanza
-#import pinterest
+import pinterest as p
 import urllib
 import re
+import pandas as pd
+
 
 #Need to have Docker running
 #Postman for Pinterest API
 
-#First I need to request the webpage from the user
+listings = pd.read_csv('listings.csv')
 
-hpl_url = "https://www.bonanza.com/hpl/Watch-Yourself/163479" #input("What is the HPL URL? ")
+listings = listings.to_numpy()
+
+print(listings)
+
+
+hpl_url = "https://www.bonanza.com/hand_picked_lists/157883" #input("What is the HPL URL? ")
 
 
 pinterest_profile = "https://www.pinterest.com/"+secrets.pinterest_username+"/boards"
 pinterest = "https://www.pinterest.com/"
-#Then we need to open this page
-driver = webdriver.Chrome()
-
-class hpl_to_pinterest_board(self, hpl_url):
-    def __init__(self):
-        self.url = help_url
-
-    def find_listings(self):
-        driver.get(self.url)
-        listings = driver.find_elements_by_class_name("image_wrap")
-        new_list = []
-        for l in listings:
-            new_list.append(re.match('.*?([0-9]+)$', l))
-
-        driver.close()
-        print(new_list)
 
 
-hpl = hpl_to_pinterest_board()
-hpl.find_listings(hpl_url)
+
+def find_listings(url):
+    driver = webdriver.Chrome()
+    driver.get(url)
+    elements = driver.find_elements_by_class_name("image_wrap")
+    listings = []
+    for l in elements:
+        href = l.get_attribute("href")
+        listings.append(re.match('.*?([0-9]+)$', href).group(1))
+    title = driver.title.strip(' - Hand Picked List')
+    driver.close()
+    return listings[:10], title
+
+
+
+def get_listing_information(listings):
+    return bonanza.get_items_information(listings)
+    #pass
+
+
+def post_to_pinterest(listings_info, title):
+    p.create_pinterest_board(title)
+    for listing in listings_info:
+        p.post_item_to_pinterest(listing, title)
+
+
+
+def main():
+    pass
+    # listings, title = find_listings(hpl_url)
+    # listings_info = get_listing_information(listings)
+    # print(listings_info)
+    # post_to_pinterest(listings_info, title)
+
+
+if __name__ == '__main__':
+    main()

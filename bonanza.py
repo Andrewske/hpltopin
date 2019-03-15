@@ -31,7 +31,7 @@ def get_items_information(listings):
 
     if response_json['ack'] == 'Success' and 'getMultipleItemsResponse' in response_json:
         for item in response_json['getMultipleItemsResponse']['item']:
-                listings_information.append({"title":item['title'], "price": item['currentPrice'],"itemUrl": item['viewItemURL']})
+                listings_information.append({"title":item['title'], "price": item['currentPrice'],"itemUrl": item['viewItemURL'], "pictureURL" : item['pictureURL'][0]})
     else:
         print(response_json)
 
