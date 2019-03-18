@@ -1,0 +1,79 @@
+.nav-bar {
+    position:fixed;
+    top:0;
+    width: 100%;
+    background-color: white;
+    font-family: sans-serif;
+    height: 50px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo {
+    max-height: 40px;
+    margin: 0 25 0 25;
+}
+
+body {
+    background-color: white;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.main-image {
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    font-family: sans-serif;
+    margin:50px;
+    background-color: #17191D;
+    width:100%;
+    height:700px;
+}
+
+.main-text {
+    color: white;
+    font-size: 100px;
+    font-family: sans-serif;
+}
+
+.white-text {
+    color: white;
+    font-size: 18px;
+    font-family: sans-serif;
+}
+
+.white-sub-text {
+    color:white;
+    font-size: 12px;
+    font-family: sans-serif;
+}
+
+form {
+    color:white;
+    margin-top:50px;
+
+}
+.input-text {
+    width: 300px;
+    border: 2px solid white;
+    border-radius:4px;
+    height:35px;
+}
+
+.input-submit {
+    background-color: red;
+    color:white;
+    border-radius:4px;
+    height:35px;
+    width:75px;
+    margin-left:10px;
+    font-weight:bold;
+    font-size: 14px;
+}
+

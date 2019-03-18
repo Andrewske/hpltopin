@@ -1,5 +1,3 @@
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 import secrets
 import time
 import bonanza
@@ -8,6 +6,7 @@ import urllib
 import re
 import pandas as pd
 from bs4 import BeautifulSoup
+from flask import Flask, render_template, request, jsonify
 
 
 #Need to have Docker running
@@ -18,14 +17,10 @@ from bs4 import BeautifulSoup
 #listings = listings.to_numpy()
 
 
+app = Flask(__name__)
 
 
-hpl_url = "https://www.bonanza.com/hpl/Spring-into-Men-s-Clothes/163722" #input("What is the HPL URL? ")
-
-
-pinterest_profile = "https://www.pinterest.com/"+secrets.pinterest_username+"/boards"
-pinterest = "https://www.pinterest.com/"
-
+@app.route('/')
 def find_listings(url):
     page = urllib.request.urlopen(url)
     soup = BeautifulSoup(page, 'html.parser')
