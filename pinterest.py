@@ -9,7 +9,7 @@ def authenticate_user():
     
     auth_code_dict = {
         'response_type' : 'code',
-        'redirect_uri' : 'http://127.0.0.1:5000/success',
+        'redirect_uri' : 'https://hpltopin.com/success',
         'client_id' : '5021381484636841344',
         'scope' : ['read_public', 'write_public']
     }

@@ -18,10 +18,10 @@ def index():
 @app.route('/authenticate_user',methods=['GET', 'POST'])
 def authenticate_user():
     if request.method == 'POST':
-        return urllib.request.urlopen('https://api.pinterest.com/oauth/?response_type=code&redirect_uri=https%3A%2F%2F127.0.0.1%3A5000%2Fsuccess&client_id=5021381484636841344&scope=%5B%27read_public%27%2C+%27write_public%27%5D')
+        urllib.request.urlopen('https://api.pinterest.com/oauth/?response_type=code&redirect_uri=https%3A%2F%2F127.0.0.1%3A5000%2Fsuccess&client_id=5021381484636841344&scope=%5B%27read_public%27%2C+%27write_public%27%5D')
         hpl_url = request.form
         #pinterest.authenticate_user()
-        #return render_template('success.html', hpl_url = hpl_url)
+        return render_template('success.html', hpl_url = hpl_url)
     else: return "nope"
     
     
@@ -46,10 +46,13 @@ def create_and_post(code):
 
 
 if __name__ == '__main__':
-	app.run(debug=True, ssl_context=('https/server.crt', 'https/server.key'))
+	app.run(debug=True)
 
 
 #1. User enters the URL for the HPL
 #2. We send them to the Pinterest Authentication
 #3. Pinterest returns them to the redirect url with an access token
 # Example: https://andrewske.github.io/pinterest-bonanza-api/?state=768uyFys&code=f3bb9c23
+
+
+
