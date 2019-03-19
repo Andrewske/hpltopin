@@ -10,12 +10,12 @@
       <li>Log in to Pinterest and allow access</li>
     </ol> 
     <p class = 'white-text'>A new board will be created using the name of the HPL, and populated with pins for each listing</p>  
-    <form action="https://api.pinterest.com/oauth/?response_type=code&redirect_uri=https%3A%2F%2Fhpltopin%2Fsuccess&client_id=5021381484636841344&scope=%5B%27read_public%27%2C+%27write_public%27%5D" method="POST", id="hpl_url">
+    <form action= "/authenticate_user" method="POST" name="hpl_url">
       Hand Picked List URL: <br>
       <input class="input-text" type="text" name="hpl_url">
-      <button class="input-submit"type="submit" value="Pin List">Pin List</button>
-      <p class='white-sub-text'>Example: <a href='https://www.bonanza.com/hand_picked_lists/163479'>https://www.bonanza.com/hand_picked_lists/163479</a></p>
+      <input class="input-submit"type="submit" value="Pin List">
     </form>
+    <p class='white-sub-text'>Example: <a href='https://www.bonanza.com/hand_picked_lists/163479'>https://www.bonanza.com/hand_picked_lists/163479</a></p>
   </div>
 
     

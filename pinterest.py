@@ -3,13 +3,15 @@ import json
 import requests
 import urllib
 
+
+
 api_url = 'https://api.pinterest.com/'
 
 def authenticate_user():
     
     auth_code_dict = {
         'response_type' : 'code',
-        'redirect_uri' : 'https://hpltopin.com/success',
+        'redirect_uri' : 'https://www.hpltopin.com/success/',
         'client_id' : '5021381484636841344',
         'scope' : ['read_public', 'write_public']
     }
