@@ -6,17 +6,16 @@ import urllib
 api_url = 'https://api.pinterest.com/'
 
 def authenticate_user():
-    print("authenticating user")
+    
     auth_code_dict = {
         'response_type' : 'code',
-        'redirect_uri' : 'https://andrewske.github.io/pinterest-bonanza-api/',
+        'redirect_uri' : 'http://127.0.0.1:5000/success',
         'client_id' : '5021381484636841344',
         'scope' : ['read_public', 'write_public']
     }
-
     params = urllib.parse.urlencode(auth_code_dict)
     url = api_url + 'oauth/?' + params
-    urllib.request.urlopen(url)
+    print(url)
     
     
     
@@ -66,4 +65,4 @@ def create_pinterest_board(title):
     return response_json
 
 if __name__ == '__main__':
-    pass
+    authenticate_user()
