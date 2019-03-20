@@ -3,13 +3,25 @@
 {% block content %}
 
 <div class='main-image'>
-    <p class="main-text">Success!</p></br>
-    <img src='https://media.giphy.com/media/dIxkmtCuuBQuM9Ux1E/giphy.gif'>
-    
-    
+    <p class='main-text'>Success!</p></br>
+    <img class = 'gif' src='{{ success_gif }}'></img>
+    <p class='white-text'>Hi, {{ username }}</p>
+    <a href='{{ board_url }}'><p class = 'white-text'>Board: {{ board_url }}</p></a>
+</div>
+
+
+<div>
+    <p class = 'black-text'>Pins:</p>
+    <ul>
+        {% for value in data %}
+            <a style='color:rgb(0, 0, 0)' href='{{ value }}'><li class='black-text'>{{ value }}</l1></a>
+        {% endfor %}
+    </ul>
 </div>
 
 
 {% endblock content %}
 
 
+
+    

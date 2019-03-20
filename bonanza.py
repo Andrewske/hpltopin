@@ -1,6 +1,4 @@
-import json
-import urllib
-import requests
+import re, json, urllib, requests
 from bs4 import BeautifulSoup
 
 url = 'https://api.bonanza.com/api_requests/secure_request'
@@ -13,9 +11,15 @@ headers = {
 
 listings = ['660154339','669928968','644198149','650819038','668243296']
 
+hpl_url = None
+
+def set_hpl(url):
+    global hpl_url
+    hpl_url = url
+
 
 def find_listings(url):
-    page = urllib.request.urlopen(url)
+    page = urllib.request.urlopen(url, timeout=10)
     soup = BeautifulSoup(page, 'html.parser')
     elements = soup.find_all('a', attrs={'class':'image_wrap'})
 
@@ -25,7 +29,7 @@ def find_listings(url):
         listings.append(re.match('.*?([0-9]+)$', href).group(1))
     title = soup.title.string
     title = title.replace(" - Hand Picked List", "")
-    return listings[:10], title
+    return listings[:2], title
 
 def get_items_information(listings):
     request_name = 'getMultipleItemsRequest'
