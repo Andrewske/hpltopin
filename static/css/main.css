@@ -61,6 +61,11 @@ body {
     font-family: sans-serif;
 }
 
+.no-success-text {
+    color: white;
+    font-size: 75px;
+    font-family: sans-serif;
+}
 
 
 .white-text {

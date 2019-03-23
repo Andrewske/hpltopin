@@ -1,6 +1,7 @@
 import secrets
 from urllib import request
 import json, urllib, requests
+import os
 
 api_url = "https://api.giphy.com/v1/gifs/"
 
@@ -22,4 +23,4 @@ def get_gif(keyword):
 
 
 if __name__ == "__main__":
-    print(get_gif("success"))
+    print(os.urandom(24))  # get_gif("success"))

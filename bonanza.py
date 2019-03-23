@@ -11,12 +11,12 @@ headers = {
 
 listings = ["660154339", "669928968", "644198149", "650819038", "668243296"]
 
-hpl_url = 'https://www.bonanza.com/hpl/Shades-and-Sunnies/163720'
+hpl_url = None
 
 
 def set_hpl(url):
     global hpl_url
-    hpl_url = 'url'
+    hpl_url = url
 
 
 def find_listings(url):
@@ -64,11 +64,12 @@ def get_items_information(listings):
                 }
             )
     else:
-        print(response_json)
+        return response_json
 
     return listings_information
 
 
 if __name__ == "__main__":
-    hpl_url = 'https://www.bonanza.com/hpl/Garden-Tools/163708'
-    find_listings('https://www.bonanza.com/hpl/Shades-and-Sunnies/163720')
+    #hpl_url = 'https://www.bonanza.com/hpl/Garden-Tools/163708'
+    #print(find_listings('https://www.bonanza.com/hpl/Shades-and-Sunnies/163720'))
+    print(get_items_information(['648542818', '671856167']))
