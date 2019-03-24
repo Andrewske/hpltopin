@@ -70,6 +70,7 @@ def get_items_information(listings):
 
 
 if __name__ == "__main__":
-    #hpl_url = 'https://www.bonanza.com/hpl/Garden-Tools/163708'
-    #print(find_listings('https://www.bonanza.com/hpl/Shades-and-Sunnies/163720'))
-    print(get_items_information(['648542818', '671856167']))
+    # hpl_url = 'https://www.bonanza.com/hpl/Garden-Tools/163708'
+    # print(find_listings('https://www.bonanza.com/hpl/Shades-and-Sunnies/163720'))
+    print(get_items_information(["648542818", "671856167"]))
+

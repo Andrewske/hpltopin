@@ -1,75 +1,68 @@
 <!DOCTYPE html>
 
 <html>
-
-<head>
-    <meta charset="utf-8">
+  <head>
+    <meta charset="utf-8" />
     <!DOCTYPE html>
     <!--<link rel='stylesheet' href='static/css/main.css'>-->
-    <link rel="stylesheet" type="text/css" href="static/css/main.css">
+    <link rel="stylesheet" type="text/css" href="static/css/main.css" />
     {% if title %}
     <title>{{ title }}</title>
     {% else %}
     <title>Bonanza Hand Picked List to Pinterest</title>
     {% endif %}
-    <script>
-        window.pAsyncInit = function () {
-            PDK.init({
-                appId: "5021381484636841344", 
-                cookie: true
-            });
-        };
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  </head>
 
-        (function (d, s, id) {
-            var js, pjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) { return; }
-            js = d.createElement(s); js.id = id;
-            js.src = "//assets.pinterest.com/sdk/sdk.js";
-            pjs.parentNode.insertBefore(js, pjs);
-        }(document, 'script', 'pinterest-jssdk'));
+  <header class="nav-bar">
+    <img class="logo" src="static/media/bonanza_logo_green.png" />
+    <img class="logo" src="static/media/badgeRGB.png" />
+  </header>
 
-        function login() {
-            PDK.login({
-                scope: "read_public, write_public, read_relationships, write_relationships"
-            }, function (session) {
-                if (!session) {
-                    // The user didn't authorize or closed the popup window
-                } else {
-                    // Success!
-                    var session_response = PDK.getSession
-                    ```var user_info = PDK.getme```
-        
-                    $.post( "/authenticate_user", {
-                            response: session_response
-                        }); // Save this to the database along with other info
-                }
-            });
-        };
-        
-
-
-    </script>
-</head>
-
-<header class='nav-bar'>
-    <img class='logo' src='static/media/bonanza_logo_green.png'>
-    <img class='logo' src='static/media/badgeRGB.png'>
-</header>
-
-<body>
-
+  <body>
     {% block content %}{% endblock %}
 
+    <script>
+      window.pAsyncInit = function() {
+        PDK.init({
+          appId: "5021381484636841344",
+          cookie: false
+        });
+      };
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="{{ url_for('static', filename='jquery.js') }}">\x3C/script>')</script>
-    <script type=text/javascript>$SCRIPT_ROOT={{ request.script_root|tojson|safe }};</script> 
+      function login(callback) {
+        PDK.login(
+          {
+            scope:
+              "read_public, write_public, read_relationships, write_relationships"
+          },
+          function(response) {
+            if (!response || response.error) {
+              alert("Error Occurred");
+            } else {
+              var access_token = PDK.getSession().accessToken;
+            }
+          }
+        );
+      }
 
-</body> 
+      (function(d, s, id) {
+        var js,
+          pjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {
+          return;
+        }
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//assets.pinterest.com/sdk/sdk.js";
+        pjs.parentNode.insertBefore(js, pjs);
+      })(document, "script", "pinterest-jssdk");
+    </script>
+  </body>
 
-    <footer>
-        <a href="https://github.com/Andrewske/pinterest-bonanza-api"><img class='logo'
-            src="static/media/GitHub-Mark-64px.png"></a>
-    </footer>
-
+  <footer>
+    <a href="https://github.com/Andrewske/pinterest-bonanza-api"
+      ><img class="logo" src="static/media/GitHub-Mark-64px.png"
+    /></a>
+  </footer>
 </html>

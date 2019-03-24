@@ -1,4 +1,5 @@
-import psycopg2, secrets
+import psycopg2
+import secrets
 from werkzeug.security import generate_password_hash
 
 # connect to the database
@@ -18,14 +19,14 @@ class DatabaseConnection:
 
     def create_user(self, username, access_token, password_hash):
         create_user_command = (
-            "INSERT INTO users(username, access_token) VALUES ('"
+            "INSERT INTO users(username, access_token, password_hash) VALUES ('"
             + username
             + "' , '"
             + access_token
-            + "') ON CONFLICT (username) DO UPDATE SET access_token = '"
-            + access_token
             + "','"
             + password_hash
+            + "') ON CONFLICT (username) DO UPDATE SET access_token = =tcp'"
+            + access_token
             + "';"
         )
         self.cursor.execute(create_user_command)
@@ -61,7 +62,9 @@ class DatabaseConnection:
 
 if __name__ == "__main__":
     con = DatabaseConnection()
-    con.create_user("kevinbigfoot", "new_acces_token")  # secrets.pinterest_test_key)
+    con.create_user(
+        "kevinbigfoot", "new_acces_token", "password"
+    )  # secrets.pinterest_test_key)
 
 
 # con =

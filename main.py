@@ -30,11 +30,11 @@ def index():
 
 @app.route("/authenticate_user", methods=["GET", "POST"])
 def get_access_token():
-    jsdata = request.form.get("response")
+    jsdata = request.args.get("response")
     if jsdata == None:
         return render_template("no_success.html")
     else:
-        return render_template("index.html", board_url=json.loads(jsdata)[0])
+        return render_template("index.html", board_url=jsdata)
 
 
 @app.route("/auth", methods=["POST"])
@@ -225,7 +225,8 @@ def serviceError(e):
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    context = ("example.com+5.pem", "example.com+5-key.pem")
+    app.run(debug=True, ssl_context=context)
 
 
 # 1. User enters the URL for the HPL
