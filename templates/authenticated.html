@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="main-image">
+  <h1 class="main-text">Welcome {{ username }}</h1>
+  <ol class="white-text">
+    <li>Enter in a Hand Picked List URL from Bonanza.com</li>
+    <li>Click 'Pin List'</li>
+  </ol>
+  <p class="white-text">
+    A new board will be created using the name of the HPL, and populated with
+    pins for each listing
+  </p>
+  <form action="/success" method="POST">
+    Hand Picked List URL: <br />
+    <input class="input-text" type="text" name="hpl_url" />
+    <input class="input-submit" type="submit" value="Pin List" />
+  </form>
+  <p class="white-sub-text">
+    Example:
+    <a
+      style="color:white"
+      href="https://www.bonanza.com/hand_picked_lists/163479"
+      >https://www.bonanza.com/hand_picked_lists/163479</a
+    >
+  </p>
+</div>
+
+<p>{{ response }}, {{ access_token }}</p>
+
+{% endblock content %}

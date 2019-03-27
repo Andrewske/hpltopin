@@ -2,25 +2,14 @@
 
 <div class="main-image">
   <h1 class="main-text">Bonanza to Pinterest</h1>
-  <ol class="white-text">
-    <li>Enter in a Hand Picked List URL from Bonanza.com</li>
-    <li>Click 'Pin List'</li>
-    <li>Log in to Pinterest and allow access</li>
-  </ol>
   <p class="white-text">
-    A new board will be created using the name of the HPL, and populated with
-    pins for each listing
+    Welcome! Want to post a Hand Picked List(hpl) from Bonanza to Pinterest?
   </p>
-  <p>{{ board_url }}</p>
-  <form action="/" method="POST">
-    Hand Picked List URL: <br />
-    <input class="input-text" type="text" name="hpl_url" />
-    <input
-      class="input-submit"
-      type="submit"
-      value="Pin List"
-      onclick="login(); return False;"
-    />
+  <p class="white-text">
+    Just log in with Pinterest!
+  </p>
+  <form action="/authenticate_user" method="POST">
+    <input class="input-submit" type="submit" />
   </form>
   <p class="white-sub-text">
     Example:

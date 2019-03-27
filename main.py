@@ -2,10 +2,11 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for, s
 from db import DatabaseConnection
 from bs4 import BeautifulSoup
 from flask_login import LoginManager
-import pinterest, bonanza, giphy
+import pinterest, bonanza, giphy, templates
 import urllib, json
 from urllib.request import urlopen
 import secrets
+from class_pinterest import Pinterest
 
 
 gifs = ["https://media.giphy.com/media/nXxOjZrbnbRxS/giphy.gif"]
@@ -21,101 +22,63 @@ app.secret_key = secrets.secret_key
 db = DatabaseConnection()
 login_manager = LoginManager()
 login_manager.init_app(app)
+p = Pinterest()
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    code = request.args.get("code", None)
+    if code == None:
+        return render_template("index.html")
+    else:
+        access_token_error = p.get_access_token(code)
+        if isinstance(p.access_token, str):
+            response = p.set_username()
+            return render_template(
+                "authenticated.html",
+                username=p.username,
+                response=response,
+                access_token=p.access_token,
+            )
+        else:
+            return templates.no_success(access_token_error)
 
 
 @app.route("/authenticate_user", methods=["GET", "POST"])
 def get_access_token():
-    jsdata = request.args.get("response")
-    if jsdata == None:
-        return render_template("no_success.html")
-    else:
-        return render_template("index.html", board_url=jsdata)
-
-
-@app.route("/auth", methods=["POST"])
-def authenticate_user():
-    # page_url = request.url
-    # page_html = urlopen(page_url)
-    # soup = BeautifulSoup(page_html, "html_parser")
-    # soup.find_all("script").string
-    # try:
-    # pinterest.get_access_token()
-    return None  # render_template("success.html", board_url=board_url)
-    # except:
-    #     return render_template("no_success.html", no_success_gif=giphy.get_gif("uh oh"))
-
-    # if request.method == "POST":
-    #     bonanza.set_hpl(request.form["hpl_url"])
-    #     auth_url = pinterest.authenticate_user()
-    #     return redirect(auth_url)
-    # else:
-    #     return render_template("index.html")
+    return redirect(secrets.test_auth_url)
 
 
 @app.route("/success", methods=["GET", "POST"])
 def create_and_post():
-    # access_token = pinterest.get_access_token(request.args.get("code"))
-    if isinstance(access_token, str):
-        hpl_url = bonanza.hpl_url
-        if hpl_url == None:
-            return render_template(
-                "no_success.html",
-                error="hpl_url: " + hpl_url,
-                no_success_gif=giphy.get_gif("uh oh"),
-            )
-        else:
-            listings, title = bonanza.find_listings(hpl_url)
-            listings_info = bonanza.get_items_information(listings)
-            try:
-                username = pinterest.get_username(access_token)
-            except:
-                return render_template(
-                    "no_success.html",
-                    error="Couldn't Get Username",
-                    no_success_gif=giphy.get_gif("uh oh"),
-                )
-            else:
-                board_url = pinterest.create_pinterest_board(
-                    title, username, access_token
-                )
-                if "www" not in board_url:
-                    return render_template(
-                        "no_success.html",
-                        error="board_url: " + board_url,
-                        no_success_gif=giphy.get_gif("uh oh"),
-                    )
-                else:
-                    data = []
-                    for listing in listings_info:
-                        data.append(
-                            pinterest.post_item_to_pinterest(
-                                listing, title, username, access_token
-                            )
-                        )
-                    if "message" in data[0]:
-                        return render_template(
-                            "no_success.html",
-                            error=data[0],
-                            no_success_gif=giphy.get_gif("uh oh"),
-                        )
-                    else:
-                        success_gif = giphy.get_gif("success")
-                        return render_template(
-                            "success.html",
-                            data=data,
-                            title=title,
-                            board_url=board_url,
-                            success_gif=success_gif,
-                        )
-    else:
+    hpl_url = request.form.get("hpl_url")
+    if hpl_url == None:
         return render_template(
-            "no_success.html", error=access_token, no_success_gif=giphy.get_gif("uh oh")
+            "no_success.html",
+            error="hpl_url: " + hpl_url,
+            no_success_gif=giphy.get_gif("uh oh"),
         )
+    else:
+        listings, title = bonanza.find_listings(hpl_url)
+        listings_info = bonanza.get_items_information(listings)
+        board_url = pinterest.create_pinterest_board(title)
+        if isinstance(board_url, str):
+            data = []
+            for listing in listings_info:
+                data.append(pinterest.post_item_to_pinterest(listing, title))
+            if "message" in data[0]:
+                return templates.no_success(data[0])
+            else:
+                success_gif = giphy.get_gif("success")
+                return render_template(
+                    "success.html",
+                    data=data,
+                    title=title,
+                    board_url=board_url,
+                    success_gif=success_gif,
+                )
+        else:
+            return templates.no_success(board_url)
 
 
 @app.route("/test", methods=["GET", "POST"])
@@ -228,8 +191,3 @@ if __name__ == "__main__":
     context = ("example.com+5.pem", "example.com+5-key.pem")
     app.run(debug=True, ssl_context=context)
 
-
-# 1. User enters the URL for the HPL
-# 2. We send them to the Pinterest Authentication
-# 3. Pinterest returns them to the redirect url with an access token
-# Example: https://andrewske.github.io/pinterest-bonanza-api/?state=768uyFys&code=f3bb9c23

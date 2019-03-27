@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "pinterest-bonanza-env/bin/python",
+    "python.pythonPath": "/Library/Frameworks/Python.framework/Versions/3.6/bin/python3",
     "liveServer.settings.host": "localhost",
     "editor.formatOnSave": true,
     "python.formatting.provider": "black"
