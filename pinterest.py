@@ -18,7 +18,7 @@ def authenticate_user():
     auth_code_dict = {
         "response_type": "code",
         "redirect_uri": "https://127.0.0.1:5000/authenticated",
-        "client_id": secrets.pinterest_app_id,
+        "client_id": secrets.bonz_pinterest_app_id,
         "scope": "read_public, write_public, read_relationships, write_relationships",
     }
     params = urlencode(auth_code_dict, True)
@@ -29,8 +29,8 @@ def authenticate_user():
 def get_access_token(code):
     access_token_dict = {
         "grant_type": "authorization_code",
-        "client_id": secrets.pinterest_app_id,
-        "client_secret": secrets.pinterest_token,
+        "client_id": secrets.bonz_pinterest_app_id,
+        "client_secret": secrets.bonz_pinterest_app_secret_key,
         "code": code,
     }
     response = requests.post(api_url + "v1/oauth/token", data=access_token_dict)

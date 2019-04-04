@@ -17,7 +17,7 @@ class Pinterest:
         auth_code_dict = {
             "response_type": "code",
             "redirect_uri": "https://hpltopin.com",
-            "client_id": secrets.pinterest_app_id,
+            "client_id": secrets.bonz_pinterest_app_id,
             "scope": "read_public, write_public, read_relationships, write_relationships",
         }
         params = urlencode(auth_code_dict, True)
@@ -26,8 +26,8 @@ class Pinterest:
     def get_access_token(self, code):
         access_token_dict = {
             "grant_type": "authorization_code",
-            "client_id": secrets.pinterest_app_id,
-            "client_secret": secrets.pinterest_token,
+            "client_id": secrets.bonz_pinterest_app_id,
+            "client_secret": secrets.bonz_pinterest_app_secret_key,
             "code": code,
         }
         response = requests.post(
