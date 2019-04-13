@@ -1,5 +1,5 @@
 from flask import Flask, render_template, redirect
-import secrets, giphy, templates
+from . import secrets, giphy, templates
 import json
 import requests
 

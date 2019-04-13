@@ -1,6 +1,7 @@
 {
-    "python.pythonPath": "/Library/Frameworks/Python.framework/Versions/3.6/bin/python3",
-    "liveServer.settings.host": "localhost",
-    "editor.formatOnSave": true,
-    "python.formatting.provider": "black"
+  "python.pythonPath": "/Library/Frameworks/Python.framework/Versions/3.6/bin/python3",
+  "liveServer.settings.host": "localhost",
+  "editor.formatOnSave": true,
+  "python.formatting.provider": "black",
+  "python.linting.pylintArgs": ["--load-plugins", "pylint_flask"]
 }

@@ -1,5 +1,5 @@
 from flask import render_template
-import giphy
+from . import giphy
 
 
 def no_success(error):

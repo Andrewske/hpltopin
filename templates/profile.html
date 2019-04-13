@@ -1,0 +1,20 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="main-image">
+  <div class= "gif-container">
+      <img class = 'gif' src='{{ profile_gif }}'></img>
+      <div class='text-box'>
+        <p class="text">Welcome to your profile</p>
+        <p><a style="color:#56693D" href="bonanza.com">{{ username }}</a></p>
+      </div> 
+  </div>
+  <div class= "right-container">
+    <h1 class="main-text">Time to Pin a List</h1>
+    <p class="white-text">
+      Let's connect to pinterest
+    </p>
+    <button class="red-button" type="submit", onclick="window.location.href = '{{ auth_url }}';">Log in with Pinterest</button>
+  </div>
+</div>
+
+{% endblock content %}

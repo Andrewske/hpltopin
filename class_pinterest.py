@@ -1,4 +1,5 @@
-import secrets, templates, requests, json
+from . import secrets, templates
+import requests, json
 
 try:
     from urllib.parse import urlencode
@@ -16,7 +17,7 @@ class Pinterest:
     def get_auth_url(self):
         auth_code_dict = {
             "response_type": "code",
-            "redirect_uri": "https://hpltopin.com",
+            "redirect_uri": "https://127.0.0.1:5000/authenticate_user",
             "client_id": secrets.bonz_pinterest_app_id,
             "scope": "read_public, write_public, read_relationships, write_relationships",
         }
