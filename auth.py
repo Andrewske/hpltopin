@@ -19,21 +19,28 @@ def login_post():
     username = request.form.get("username")
     password = request.form.get("password")
     remember = True if request.form.get("remember") else False
-
     user = User.query.filter_by(username=username).first()
-
-    if not user:
-        new_user = User(
-            username=username,
-            password=generate_password_hash(password, method="sha256"),
-        )
-        db.session.add(new_user)
-        db.session.commit()
-    elif not check_password_hash(user.password, password):
-        flash("Ah ah ah, you didn't say the magic word")
-        return render_template("index.html", welcome_gif=get_gif("ah ah ah"))
-
+    if request.form["action"] == "sign-up":
+        if user:
+            flash("Uh oh, that name it take, try again")
+            return render_template("index.html", welcome_gif=get_gif("try again"))
+        else:
+            new_user = User(
+                username=username,
+                password=generate_password_hash(password, method="sha256"),
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            user = User.query.filter_by(username=username).first()
+    elif request.form["action"] == "login":
+        if not user:
+            flash("Hmm... Can't find a user with that name, sign up?")
+            return render_template("index.html", welcome_gif=get_gif("hmm"))
+        elif not check_password_hash(user.password, password):
+            flash("Ah ah ah, you didn't say the magic word")
+            return render_template("index.html", welcome_gif=get_gif("ah ah ah"))
     login_user(user, remember=remember)
+
     return redirect(url_for("main.profile"))
 
 
