@@ -10,8 +10,9 @@ class User(UserMixin, db.Model):
     pinterest_username = db.Column(db.String(100), unique=True, nullable=True)
     profile_url = db.Column(db.String(100), nullable=True)
     profile_pic = db.Column(db.String(100), nullable=False, default="default.jpg")
-    access_token = db.Column(db.String(100), nullable=True)
+    access_token = db.Column(db.String(1000), nullable=True)
     boards = db.relationship("Board", backref="user", lazy=True)
+    pins = db.relationship("Pin", backref="user", lazy=True)
 
     def __repr__(self):
         return f"User('{self.username}')"

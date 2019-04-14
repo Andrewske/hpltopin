@@ -33,82 +33,91 @@ p = Pinterest()
 
 @main.route("/", methods=["GET", "POST"])
 def index():
-    code = request.args.get("code", None)
-    if code == None:
-        return render_template("index.html", welcome_gif=get_gif("hi"))
+    user = current_user
+    if user.is_authenticated:
+        return render_template("user_homepage.html", welcome_gif=get_gif("hi friend"))
     else:
-        access_token_error = p.get_access_token(code)
-        if isinstance(p.access_token, str):
-            response = p.set_username()
-            return render_template(
-                "authenticated.html",
-                username=p.username,
-                response=response,
-                access_token=p.access_token,
-            )
-        else:
-            return t.no_success(access_token_error)
+        return render_template("anon_homepage.html", welcome_gif=get_gif("hi"))
 
 
 @main.route("/profile")
 @login_required
 def profile():
-    return render_template(
-        "profile.html",
-        profile_gif=get_gif("you made it"),
-        username=current_user.username,
-        auth_url=p.get_auth_url(),
-    )
+    user = current_user
+    if not user.pinterest_username:
+        try:
+            user.pinterest_username = p.set_username(access_token=user.access_token)
+            db.session.commit()
+            return t.profile()
+        except:
+            return t.profile(message="exception")
+    else:
+        return t.profile(message=user.pinterest_username)
 
 
 @main.route("/authenticate_user", methods=["GET", "POST"])
+@login_required
 def get_access_token():
     code = request.args.get("code", None)
     if code == None:
-        return render_template("index.html", welcome_gif=get_gif("hi"))
+        return render_template("profile.html", welcome_gif=get_gif("hi"))
     else:
         if current_user.is_authenticated:
             user = current_user
             user.access_token = p.get_access_token(code)
-            return render_template(
-                "pin_list.html",
-                username=current_user.username,
-                access_token=user.access_token,
-            )
+            try:
+                db.session.add(user)
+                db.session.commit()
+                return t.profile(
+                    username=current_user.username, access_token=user.access_token
+                )
+            except:
+                return t.profile(
+                    username=current_user.username,
+                    access_token=user.access_token,
+                    message="didn't save access token",
+                )
         else:
             return t.no_success(error="No current user")
 
 
-@main.route("/success", methods=["GET", "POST"])
-def create_and_post():
-    hpl_url = request.form.get("hpl_url")
-    if hpl_url == None:
-        return render_template(
-            "no_success.html",
-            error="hpl_url: " + hpl_url,
-            no_success_gif=get_gif("uh oh"),
+@main.route("/pin_list", methods=["GET", "POST"])
+@login_required
+def pin_list():
+    user = current_user
+    if request.method == "POST":
+        hpl_url = request.form.get("hpl_url")
+        listings, title = bonanza.find_listings(hpl_url)
+        session["title"] = title
+        session["listings_info"] = bonanza.get_items_information(listings)
+        return t.pin_list(
+            username=user.username,
+            listing_count=len(listings),
+            board_name=title,
+            hpl_url=hpl_url,
         )
     else:
-        listings, title = bonanza.find_listings(hpl_url)
-        listings_info = bonanza.get_items_information(listings)
-        board_url = pinterest.create_pinterest_board(title)
-        if isinstance(board_url, str):
-            data = []
-            for listing in listings_info:
-                data.append(pinterest.post_item_to_pinterest(listing, title))
-            if "message" in data[0]:
-                return t.no_success(data[0])
-            else:
-                success_gif = get_gif("success")
-                return render_template(
-                    "success.html",
-                    data=data,
-                    title=title,
-                    board_url=board_url,
-                    success_gif=success_gif,
-                )
+        return t.pin_list(username=user.username)
+
+
+@main.route("/create_and_post", methods=["GET", "POST"])
+def create_and_post():
+    user = current_user
+    title = session.get("title", None)
+    listings_info = session.get("listings_info", None)
+    board_url = p.create_pinterest_board(title=title)
+    if isinstance(board_url, str):
+        data = []
+        for listing in listings_info:
+            data.append(pinterest.post_item_to_pinterest(listing, title))
+        if "message" in data[0]:
+            return t.no_success(data[0])
         else:
-            return t.no_success(board_url)
+            return t.success(
+                data=data, title=title, board_url=board_url, message=listings_info
+            )
+    else:
+        return t.no_success(error=board_url)
 
 
 @main.route("/test", methods=["GET", "POST"])
@@ -117,38 +126,14 @@ def test():
     return redirect(url_for("test2"))
 
 
-@main.route("/test2", methods=["GET", "POST"])
-def test2():
-    username = "kevinbigfoot"
-    access_token = "super_new_access_token"
-    db.create_user(username, access_token)
-    return render_template(
-        "no_success.html", error=username, no_success_gif=get_gif("uh oh")
-    )
-
-
 @main.errorhandler(404)
 def pageNotFound(e):
-    return (
-        render_template(
-            "no_success.html",
-            error="Page Not Found",
-            no_success_gif=giphy.get_gif("uh oh"),
-        ),
-        404,
-    )
+    return (t.no_success(error="Page not Found"), 404)
 
 
 @main.errorhandler(500)
 def serviceError(e):
-    return (
-        render_template(
-            "no_success.html",
-            error="Internal Service Error",
-            no_success_gif=giphy.get_gif("uh oh"),
-        ),
-        500,
-    )
+    return (t.no_success(error="Internal Service Error"), 500)
 
 
 if __name__ == "__main__":

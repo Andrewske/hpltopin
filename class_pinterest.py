@@ -1,5 +1,7 @@
+from flask_login import LoginManager, login_required, current_user
 from . import secrets, templates
 import requests, json
+from . import db
 
 try:
     from urllib.parse import urlencode
@@ -10,7 +12,6 @@ except ImportError:
 class Pinterest:
     def __init__(self):
         self.api_url = "https://api.pinterest.com/"
-        self.access_token = None
         self.username = None
         self.board_name = None
 
@@ -18,7 +19,7 @@ class Pinterest:
         auth_code_dict = {
             "response_type": "code",
             "redirect_uri": "https://127.0.0.1:5000/authenticate_user",
-            "client_id": secrets.bonz_pinterest_app_id,
+            "client_id": secrets.kev_pinterest_app_id,
             "scope": "read_public, write_public, read_relationships, write_relationships",
         }
         params = urlencode(auth_code_dict, True)
@@ -27,31 +28,34 @@ class Pinterest:
     def get_access_token(self, code):
         access_token_dict = {
             "grant_type": "authorization_code",
-            "client_id": secrets.bonz_pinterest_app_id,
-            "client_secret": secrets.bonz_pinterest_app_secret_key,
+            "client_id": secrets.kev_pinterest_app_id,
+            "client_secret": secrets.kev_pinterest_app_secret_key,
             "code": code,
         }
         response = requests.post(
             self.api_url + "v1/oauth/token", data=access_token_dict
         )
         if "access_token" in json.loads(response.text):
-            self.access_token = json.loads(response.text)["access_token"]
-            return None
+            return json.loads(response.text)["access_token"]
         else:
-            return json.loads(response.text)
+            return response.text
 
-    def set_username(self):
-        username_dict = {"access_token": self.access_token, "fields": "username"}
+    def set_username(self, access_token=None):
+        user = current_user
+        username_dict = {"access_token": access_token, "fields": "username"}
         response = requests.get(self.api_url + "v1/me", params=username_dict)
         user_data = json.loads(response.text)
         try:
-            self.username = user_data["data"]["username"]
+            user.username = user_data["data"]["username"]
+            db.session.commit()
+            return user_data["data"]["username"]
         except:
             return (response, user_data)
 
-    def post_item_to_pinterest(self, listing):
+    def post_item_to_pinterest(self, listing, title):
+        user = current_user()
         item_dictionary = {
-            "access_token": self.access_token,
+            "access_token": user.access_token,
             "board": self.username + "/" + self.board_name,
             "note": listing["price"] + " " + listing["title"],
             "link": listing["itemUrl"],
@@ -65,7 +69,9 @@ class Pinterest:
             return response_data
 
     def create_pinterest_board(self, title):
-        item_dictionary = {"access_token": self.access_token, "name": title}
+        user = current_user
+        item_dictionary = {"access_token": user.access_token, "name": title.strip("'")}
+        print(title)
         self.board_name = "-".join(title.split()).lower()
         response = requests.post(self.api_url + "v1/boards/", params=item_dictionary)
         response_data = json.loads(response.text)
@@ -73,7 +79,7 @@ class Pinterest:
             if "url" in response_data:
                 return response_data["data"]["url"]
         elif "slug" in response_data["message"]:
-            return "https://www.pinterest.com/" + self.username + "/" + self.board_name
+            return "https://www.pinterest.com/" + user.username + "/" + self.board_name
         else:
             return response_data
 

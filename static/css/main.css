@@ -167,6 +167,12 @@ form {
   font-size: 14px;
 }
 
+#access_token {
+  display: none;
+  word-wrap: break-word;
+  width: 400px;
+}
+
 #hpl_url {
   width: 400px;
   font-size: 1rem;
