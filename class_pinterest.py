@@ -2,6 +2,7 @@ from flask_login import LoginManager, login_required, current_user
 from . import secrets, templates
 import requests, json
 from . import db
+from .models import User, Board, Pin
 
 try:
     from urllib.parse import urlencode
@@ -53,10 +54,12 @@ class Pinterest:
             return (response, user_data)
 
     def post_item_to_pinterest(self, listing, title):
-        user = current_user()
+        user = current_user
         item_dictionary = {
             "access_token": user.access_token,
-            "board": self.username + "/" + self.board_name,
+            "board": user.username
+            + "/"
+            + "-".join(title.replace("'", "").split()).lower(),
             "note": listing["price"] + " " + listing["title"],
             "link": listing["itemUrl"],
             "image_url": listing["pictureURL"],
@@ -70,18 +73,32 @@ class Pinterest:
 
     def create_pinterest_board(self, title):
         user = current_user
-        item_dictionary = {"access_token": user.access_token, "name": title.strip("'")}
-        print(title)
-        self.board_name = "-".join(title.split()).lower()
-        response = requests.post(self.api_url + "v1/boards/", params=item_dictionary)
-        response_data = json.loads(response.text)
-        if "data" in response_data:
-            if "url" in response_data:
-                return response_data["data"]["url"]
-        elif "slug" in response_data["message"]:
-            return "https://www.pinterest.com/" + user.username + "/" + self.board_name
-        else:
-            return response_data
+        try:
+            board = Board.query.filter_by(user_id=user.id, board_name=title).first()
+            return board.board_url
+        except:
+            item_dictionary = {
+                "access_token": user.access_token,
+                "name": title.replace("'", ""),
+            }
+            response = requests.post(
+                self.api_url + "v1/boards/", params=item_dictionary
+            )
+            response_data = json.loads(response.text)
+            if "data" in response_data:
+                if "url" in response_data:
+                    board_url = Board(
+                        url=response_data["data"]["url"],
+                        board_name=title,
+                        user=current_user,
+                    )
+                    session.add(board_url)
+                    session.commit()
+                    return response_data["data"]["url"]
+            if "DuplicateBoardSlugException" in response_data["message"]:
+                return response_data["message"]
+            else:
+                return response_data
 
     def get_user_info(self):
         username_dict = {

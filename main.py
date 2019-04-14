@@ -9,7 +9,9 @@ from flask import (
     session,
 )
 from . import db
+from .models import User, Board, Pin
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager, login_required, current_user
 from . import pinterest, bonanza, site_templates as t
 import urllib, json
@@ -109,13 +111,11 @@ def create_and_post():
     if isinstance(board_url, str):
         data = []
         for listing in listings_info:
-            data.append(pinterest.post_item_to_pinterest(listing, title))
+            data.append(p.post_item_to_pinterest(listing, title))
         if "message" in data[0]:
             return t.no_success(data[0])
         else:
-            return t.success(
-                data=data, title=title, board_url=board_url, message=listings_info
-            )
+            return t.success(data=data, title=title, board_url=board_url)
     else:
         return t.no_success(error=board_url)
 
