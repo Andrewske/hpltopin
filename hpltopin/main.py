@@ -8,22 +8,21 @@ from flask import (
     url_for,
     session,
 )
-from . import db
+from hpltopin import db
 from .models import User, Board, Pin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager, login_required, current_user
-from . import pinterest, bonanza, site_templates as t
+from hpltopin import bonanza, site_templates as t
 import urllib, json
 from urllib.request import urlopen
 import secrets
-from .class_pinterest import Pinterest
-from .giphy import get_gif
+from hpltopin.class_pinterest import Pinterest
+from hpltopin.giphy import get_gif
 
 
 gifs = ["https://media.giphy.com/media/nXxOjZrbnbRxS/giphy.gif"]
 
-authentication_url = "https://api.pinterest.com/oauth/?response_type=code&redirect_uri=https%3A%2F%2Fwww.hpltopin.com%2Fsuccess&client_id=5021381484636841344&scope=%5B%27read_public%27%2C+%27write_public%27%5D"
 
 # Deploying App on Google App Engine - https://medium.freecodecamp.org/how-to-build-a-web-app-using-pythons-flask-and-google-app-engine-52b1bb82b221
 
@@ -46,15 +45,16 @@ def index():
 @login_required
 def profile():
     user = current_user
-    if not user.pinterest_username:
-        try:
-            user.pinterest_username = p.set_username(access_token=user.access_token)
-            db.session.commit()
-            return t.profile()
-        except:
-            return t.profile(message="exception")
-    else:
-        return t.profile(message=user.pinterest_username)
+    # if user.access_token and not user.pinterest_username:
+    #     try:
+    #         user.pinterest_username = p.set_username(access_token=user.access_token)
+    #         db.session.add(user)
+    #         db.session.commit()
+    #         return t.profile()
+    #     except:
+    #         return t.profile(message="exception")
+    # else:
+    return t.profile()
 
 
 @main.route("/authenticate_user", methods=["GET", "POST"])
@@ -74,11 +74,7 @@ def get_access_token():
                     username=current_user.username, access_token=user.access_token
                 )
             except:
-                return t.profile(
-                    username=current_user.username,
-                    access_token=user.access_token,
-                    message="didn't save access token",
-                )
+                return t.profile(message="didn't save access token")
         else:
             return t.no_success(error="No current user")
 

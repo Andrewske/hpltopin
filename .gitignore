@@ -1,4 +1,7 @@
-/pinterest-bonanza-env/
+hpltopinenv/
+node_modules/
+migrations/
+
 secrets.py
 
 # Byte-compiled / optimized / DLL files

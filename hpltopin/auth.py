@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, logout_user, login_required
-from .models import User
-from . import db
+from hpltopin.models import User
+from hpltopin import db
 from .giphy import get_gif
 
 
@@ -23,7 +23,9 @@ def login_post():
     if request.form["action"] == "sign-up":
         if user:
             flash("Uh oh, that name it take, try again")
-            return render_template("index.html", welcome_gif=get_gif("try again"))
+            return render_template(
+                "anon_homepage.html", welcome_gif=get_gif("try again")
+            )
         else:
             new_user = User(
                 username=username,
@@ -35,12 +37,13 @@ def login_post():
     elif request.form["action"] == "login":
         if not user:
             flash("Hmm... Can't find a user with that name, sign up?")
-            return render_template("index.html", welcome_gif=get_gif("hmm"))
+            return render_template("anon_homepage.html", welcome_gif=get_gif("hmm"))
         elif not check_password_hash(user.password, password):
             flash("Ah ah ah, you didn't say the magic word")
-            return render_template("index.html", welcome_gif=get_gif("ah ah ah"))
+            return render_template(
+                "annon_homepage.html", welcome_gif=get_gif("ah ah ah")
+            )
     login_user(user, remember=remember)
-
     return redirect(url_for("main.profile"))
 
 
@@ -67,7 +70,7 @@ def signup_post():
     db.session.add(new_user)
     db.session.commit()
 
-    return redirect(url_for("auth.login"))
+    return redirect(url_for("main.profile"))
 
 
 @auth.route("/logout")

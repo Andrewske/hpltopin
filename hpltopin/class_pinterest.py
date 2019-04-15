@@ -20,7 +20,7 @@ class Pinterest:
         auth_code_dict = {
             "response_type": "code",
             "redirect_uri": "https://127.0.0.1:5000/authenticate_user",
-            "client_id": secrets.kev_pinterest_app_id,
+            "client_id": secrets.bonz_pinterest_app_id,
             "scope": "read_public, write_public, read_relationships, write_relationships",
         }
         params = urlencode(auth_code_dict, True)
@@ -29,8 +29,8 @@ class Pinterest:
     def get_access_token(self, code):
         access_token_dict = {
             "grant_type": "authorization_code",
-            "client_id": secrets.kev_pinterest_app_id,
-            "client_secret": secrets.kev_pinterest_app_secret_key,
+            "client_id": secrets.bonz_pinterest_app_id,
+            "client_secret": secrets.bonz_pinterest_app_secret_key,
             "code": code,
         }
         response = requests.post(
@@ -43,7 +43,7 @@ class Pinterest:
 
     def set_username(self, access_token=None):
         user = current_user
-        username_dict = {"access_token": access_token, "fields": "username"}
+        username_dict = {"access_token": user.access_token, "fields": "username"}
         response = requests.get(self.api_url + "v1/me", params=username_dict)
         user_data = json.loads(response.text)
         try:
@@ -73,14 +73,17 @@ class Pinterest:
 
     def create_pinterest_board(self, title):
         user = current_user
-        try:
-            board = Board.query.filter_by(user_id=user.id, board_name=title).first()
+        board = Board.query.filter_by(user_id=user.id, board_name=title).first()
+        print(board)
+        if board != None:
             return board.board_url
-        except:
+        else:
+
             item_dictionary = {
                 "access_token": user.access_token,
                 "name": title.replace("'", ""),
             }
+
             response = requests.post(
                 self.api_url + "v1/boards/", params=item_dictionary
             )
@@ -95,9 +98,12 @@ class Pinterest:
                     session.add(board_url)
                     session.commit()
                     return response_data["data"]["url"]
-            if "DuplicateBoardSlugException" in response_data["message"]:
-                return response_data["message"]
+            elif "message" in response_data:
+                if "DuplicateBoardSlugException" in response_data["message"]:
+                    print("Is Duplicate")
+                    return response_data["message"]
             else:
+                print("Response data" + str(response_data))
                 return response_data
 
     def get_user_info(self):

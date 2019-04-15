@@ -12,6 +12,9 @@
 # below:
 .git
 .gitignore
+pinterest-bonanza-env/
+node_modules/
+migrations/
 
 # Python pycache:
 __pycache__/
