@@ -8,17 +8,17 @@ from flask import (
     url_for,
     session,
 )
-from hpltopin import db
+from . import db
 from .models import User, Board, Pin
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import sessionmaker
 from flask_login import LoginManager, login_required, current_user
-from hpltopin import bonanza, site_templates as t
+from . import bonanza, site_templates as t
 import urllib, json
 from urllib.request import urlopen
 import secrets
-from hpltopin.class_pinterest import Pinterest
-from hpltopin.giphy import get_gif
+from .class_pinterest import Pinterest
+from .giphy import get_gif
 
 
 gifs = ["https://media.giphy.com/media/nXxOjZrbnbRxS/giphy.gif"]

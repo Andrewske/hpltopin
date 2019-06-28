@@ -3,7 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_env import MetaFlaskEnv
-from . import secrets
+import os, secrets
+from . import config
 
 
 db = SQLAlchemy()
@@ -29,11 +30,11 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    from hpltopin.auth import auth as auth_blueprint
+    from .auth import auth as auth_blueprint
 
     app.register_blueprint(auth_blueprint)
 
-    from hpltopin.main import main as main_blueprint
+    from .main import main as main_blueprint
 
     app.register_blueprint(main_blueprint)
 

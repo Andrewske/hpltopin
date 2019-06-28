@@ -1,7 +1,6 @@
 from flask_login import LoginManager, login_required, current_user
-from . import secrets, templates
 import requests, json
-from . import db
+from . import db, secrets, templates
 from .models import User, Board, Pin
 
 try:

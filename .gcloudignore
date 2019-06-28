@@ -13,6 +13,7 @@
 .git
 .gitignore
 pinterest-bonanza-env/
+hpltopinenv/
 node_modules/
 migrations/
 
